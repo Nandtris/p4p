@@ -28,7 +28,7 @@
 > refer to: https://blog.csdn.net/weixin_41712499/article/details/85208928 <br>
 向上取整: math.ceil()
 ```
-from import ceil
+from math import ceil
 ceil(-0.5) # 0
 ceil(-0.9) # 0
 ceil(0.3) # 1
@@ -72,3 +72,28 @@ Python能够处理任意大的整数，精度有限的双精度浮点数（16~17
 - s[m:n]  # m >= n None
 - s[m:n:d] # d是正数但 m >= n, d是负数但 n>=m 时 None
 
+运算符优先级 <br>
+(or < and < not)逻辑 < 比较运算符 < 算数
+
+条件表达式 <br>
+把 x 的绝对值赋值给 y ： `y = x if x >= 0 else -x`
+
+程序控制和短路求值 <br>
+a, b 是任意表达式，逻辑运算求值如下：
+- a and b：先求a，如果a值为假，就以这个值作为整个 and 表达式的值；a不假再求b，以b值作为 and 表达式的值。
+- a or b：先求a， 如果a值为真，就以这个值作为 or 表达式的值；否则求b，并以其值作为表达式的值。
+- not a
+```
+3 and 0 # 0
+0 or 'abc' # 'abc'
+if x > 0 and y/x > 1: ...x...y
+```
+循环描述只在 for 语句开始时求值一次：
+```
+# i = 0, 1, 8
+# n = 12
+n = 3
+for i in range(n):
+    print(i**3)
+    n = n + 3
+```
