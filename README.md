@@ -19,32 +19,32 @@
   
  -3 = -123 % (-10)
 ```
-#### Python取整——向上取整、向下取整、四舍五入取整、向0取整
-(refer to: https://blog.csdn.net/weixin_41712499/article/details/85208928)
-向上取整: math.ceil()
+> Python取整——向上取整、向下取整、四舍五入取整、向0取整 <br>
+> refer to: https://blog.csdn.net/weixin_41712499/article/details/85208928 <br>
+> 向上取整: math.ceil()
 ```
     import math.ceil
     ceil(-0.5) # 0
     ceil(-0.9) # 0
     ceil(0.3) # 1
 ```
-向下取整: floor()
+> 向下取整: floor()
 ```
     import.floor
     floor(-0.3) # -1
     floor(0.9) # 0
 ```
-四舍五入取整: round()
+> 四舍五入取整: round()
 ```  
     round(-2.5) # -2 
     round(-1.5) # -2
 ```
-向0取整: int()
+> 向0取整: int()
 ```
     int(-0.9) # 0
     int(0.5) # 0
 ```
-取整运算: //(向下取整)
+> 取整运算: //(向下取整)
 ```
 (-1) // 2  # -0.5
 >>> -1
