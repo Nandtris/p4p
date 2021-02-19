@@ -2,7 +2,7 @@
 程序员学Python笔记
 
 ## chap1 
-算数运算
+#### 算数运算
  
 > 取余：整点数和浮点数都能取余（p2）
  
@@ -28,24 +28,28 @@
 > refer to: https://blog.csdn.net/weixin_41712499/article/details/85208928 <br>
 向上取整: math.ceil()
 ```
-import math.ceil
+from import ceil
 ceil(-0.5) # 0
 ceil(-0.9) # 0
 ceil(0.3) # 1
 ```
 向下取整: floor()
 ```
-import.floor
+from math import floor
 floor(-0.3) # -1
 floor(0.9) # 0
 ```
-四舍五入取整: round()
-```  
+银行家舍入取整: round(number)
+```
+# 四舍五入考虑：
+# .5后非空进1
+# .5后为空：5前为偶舍去，为奇进1
 round(-2.5) # -2 
 round(-1.5) # -2
 ```
 向0取整: int()
 ```
+# 丢掉小数，取整数部分
 int(-0.9) # 0
 int(0.5) # 0
 ```
@@ -57,8 +61,14 @@ int(0.5) # 0
 3 // 2    # 1.5 to 1
 ```
 
-#### Python 浮点数
+Python 浮点数 <br>
 Python能够处理任意大的整数，精度有限的双精度浮点数（16~17位十进制精度）
 > 小数通常以浮点数的形式存储 <br>
 > 十进制形式 34.6 <br>
 > 指数形式 2.1E5 = 2.1×105 <br>
+
+#### 字符串操作
+切片
+- s[m:n]  # m >= n None
+- s[m:n:d] # d是正数但 m >= n, d是负数但 n>=m 时 None
+
