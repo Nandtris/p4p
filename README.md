@@ -113,4 +113,27 @@ def power(x, n):
 def power(x, n):
     return 1 if n == 0 else x * power(x, n-1)
 
-# 方法3 
+# 方法3 指数为奇转化为偶数，减少递归次数
+def power(x, n):
+    if n == 0:
+        return 1
+    elif n % 2 != 0: # n > 0 且为奇数
+        return x * power(x, n-1)
+    else:
+        return power(x*x, n//2) # n > 0 且为偶数
+
+# 循环实现
+def power(x, n):
+    p = 1
+    while n > 0:
+        if n % 2 != 0:
+            p *= x
+            n -= 1
+        else:
+            x *= x
+            n //= 2
+    return p
+```
+
+
+
