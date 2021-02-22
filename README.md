@@ -99,7 +99,7 @@ for i in range(n):
 ```
 
 #### 3 递归函数
-> 递归函数：在函数体里调用自身，也是一种循环 <br>
+递归函数：在函数体里调用自身，也是一种循环 <br>
 > 思路： 基本情况直接给出结果，一般情况通过递归处理 <br>
 > 例子 自然数指数乘幂: x**n
 ```
@@ -123,7 +123,7 @@ def power(x, n):
     else:
         return power(x*x, n//2) # n > 0 且为偶数
 
-# 循环实现
+# 循环实现（Python 既有循环也有递归结构）
 def power(x, n):
     p = 1
     while n > 0:
@@ -132,9 +132,51 @@ def power(x, n):
             n -= 1
         else:
             x *= x
-            n //= 2
+            n //= 2 # n 最终归结为奇数 1，转到 if 分支
     return p
 ```
 
+递归、循环和执行时间 p27
+> Fibonacci二路递归 循环不变式 平行赋值 <br>
+> 递归定义，运算速度极慢
+```
 
+def fib(n):
+    if n < 1: # F0 = 0
+        return 0
+    if n == 1: # F1 = 1
+        return 1
+    return fib(n - 1) + fib(n - 2) # Fn = F(n-1) + F(n-2) 
+```
+> improved: Loop + 平行赋值 <br>
+> ?证明 p29
+```
+# while LOOP
+ def fib(n):
+     if n < 0:
+         return 0
+     f1, f2 = 0, 1
+     k = 0
+     while k < n:
+         f1, f2 = f2, f2 + f1
+         k += 1
+     return f1
+
+# for LOOP
+def fib(n):
+    f1, f2 = 0, 1
+    for k in range(n):
+        f1, f2 = f2, f2 + f1
+    return f1
+    
+# 递归
+def fib0(f1, f2, k, n):
+    if k > n:
+        return f1
+    else:
+        return fib0(f2, f2+f1, k+1, n)
+def fib(n):
+    return fib0(0, 1, 1, n)
+```
+ 
 
