@@ -180,7 +180,7 @@ def fib(n):
 ```
 
 #### 4 程序框架（函数嵌套p38 高阶函数p41）
-> 通用球根函数（立方根、平方根）
+> 通用求根函数（立方根、平方根）
 ```
 def appr_method(x, not_enough, improve):
     # 逼近计算框架函数，高阶函数
@@ -209,8 +209,45 @@ def sqrt(x):
         
      return appr_method(x, not_enough, improve)
  ```
-  
-  
-  
  
+ > 匿名函数p45 lambda <br>
+ > lambda 表达式不能出现赋值和函数定义 <br>
+ > 可以有参数，参数即局部变量 <br>
+ > 可以使用外围作用于中的变量 <br>
+ ```
+ def cbrt(x):
+     return appr_method(x, not_enough, 
+                        lambda x, y: (2.0 * y + x / y / y) / 3)
+ ```
+ 
+> 全局声明 <br>
+> 希望在一个函数里修改全局定义的变量(global) 或 外围函数里的定义变量(nonlocal) <br>
+> 函数内把 x 声明为全局变量， 如果执行到给 x 赋值时全局名字空间里没有 x ，解释器会把 x 加进全局名字空间并赋值 <br>
+> e.g.cbrt: 统计在一次立方根计算中所有函数的调用次数 p52
+```
+count = 0
+def cbrt(x):
+    global count
+
+    def not_enough(x, guess):
+        global count
+        count += 1
+        return abs((guess**3 - x) / x) > 1e-6
+
+    improve(x, guess):
+        global count
+        count += 1
+        return (2.0 * guess + x / guess / guess) / 3
+
+    count = 1
+
+    if x == 0.0:
+        return 0.0
+    guess = x
+    while not_enough(x, guess):
+        guess = improve(x, guess)
+        return guess
+```
+
+
     
