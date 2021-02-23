@@ -178,5 +178,38 @@ def fib0(f1, f2, k, n):
 def fib(n):
     return fib0(0, 1, 1, n)
 ```
- 
 
+#### 程序框架（函数嵌套p38 高阶函数p41）
+> 通用球根函数（立方根、平方根）
+```
+def appr_method(x, not_enough, improve):
+    # 逼近计算框架函数，高阶函数
+    if x == 0.0:
+        return 0.0
+    
+    guess = x
+    while not_enough(x, guess):
+        guess = improve(x, guess)
+    return guess
+    
+def not_enough(x, guess): # 通用判断逼近程度
+    return abs((guess**3 - x) / x) > 1e-6
+    
+def cbrt(x):
+    # 求立方根
+    def improve(x, guess): # 函数嵌套
+        retturn (2.0 * guess + x / guess / guess) / 3
+        
+    return appr_method(x, not_enough, improve)
+
+def sqrt(x):
+    # 求平方根
+    def improve(x, guess):
+        return (guess + x / guess) / 2
+        
+     return appr_method(x, not_enough, improve)
+ ```
+       
+  
+ 
+    
