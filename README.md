@@ -195,7 +195,7 @@ def gen_fibs1(n):
 fs = gen_fibs(20)
 ```
 
-#### 4 程序框架（函数嵌套p38 高阶函数p41）
+#### 4 程序框架（函数嵌套p38 高阶函数p41、p69）
 > 通用求根函数（立方根、平方根）
 ```
 def appr_method(x, not_enough, improve):
@@ -264,6 +264,16 @@ def cbrt(x):
         guess = improve(x, guess)
         return guess
 ```
+
+## chp2 数据的构造和组织
+#### 1 list
+#### 2 tuple
+tuple: `t = 1, # t = (1, )` <br>
+packing:`tp  = 123, 345, 'but', 567`, unpacking:`a, b, c, d = tp` p73 <br>
+如果函数 fun(...) 返回一个二元组，`x, y = fun(...)`,则 x y 分别得到 fun 返回值里的两个成分。<br>
+平行赋值 `x, y = 0, 1` 是左边拆分右边打包 <br>
+
+
 
 
     
