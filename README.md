@@ -177,6 +177,22 @@ def fib0(f1, f2, k, n):
         return fib0(f2, f2+f1, k+1, n)
 def fib(n):
     return fib0(0, 1, 1, n)
+    
+# list F0~Fn
+def gen_fibs(n):
+    fibs = [0] * (n + 1)
+    fibs[1] = 1
+    for i in range(2, n+1):
+        fibs[i] = fibs[i-1] + fibs[i-2]
+    return fibs
+
+def gen_fibs1(n):
+    fibs = [0, 1]
+    for i in range(2, n+1):
+        fibs.append(fibs[-2] + fibs[-1])
+    return fibs
+ 
+fs = gen_fibs(20)
 ```
 
 #### 4 程序框架（函数嵌套p38 高阶函数p41）
