@@ -324,8 +324,8 @@ class Rational:
     def __turediv__(self, another):
         if another.num() == 0:
             raise ZeroDivisionError
-        rel = (self._num * another.den())/
-              (self._den * another.sun())
+        rel = （(self._num * another.den())/
+              (self._den * another.sun())）
         return rel
         
     # logical operation
@@ -346,10 +346,10 @@ class Rational:
 if __name__ == "__main__":
     five = Rational(5)
     x = Rational(3, 5)
-    print('Two third are', Rational(2, 3))
-    y = five + x * Rational(5, 17)
+    print('Two third are', Rational(2, 3)) # Two third are 2/3
+    y = five + x * Rational(5, 17) 
     if y > Rational(123, 11): print('It is large.')
-    t = type(five)
+    t = type(five) # <class '__main__.Rational'>
     if isinstance(five, Rational): print('It is OK.')
 ```
 
