@@ -352,5 +352,14 @@ if __name__ == "__main__":
     t = type(five) # <class '__main__.Rational'>
     if isinstance(five, Rational): print('It is OK.')
 ```
+#### 3 序列操作
+可变序列操作：
+`s[0:0] = t` 在 s 头添加一段元素， t 是任意可迭代对象。
+`s[len(s):len(s)] = t` 和 `s.extent(t)` 在 s 尾添加一段元素。
+```
+s = [1, 2, 3]
+s[0:0] = '01'
+print(s) # ['0', '1', 1, 2, 3]
+```
 
     
