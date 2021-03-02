@@ -429,7 +429,7 @@ for entry in os.scandir():
     else:
         print("Something wrong")
 ```
-> 统计Python代码总字符数、空格数
+> 统计Python代码总字符数、空格数p105
 ```
 import os
 def work_on_file(fname):
@@ -457,6 +457,40 @@ def stat(path='.'):
 
 print(stat())
 ```
+> 词频统计p117
+```
+def word_stat(infname, stat_file):
+    word_dict = {}
+    num = 0
+    textfile = open(infname)
+
+    for line in textfile:
+        word_list = line.split()
+        for word in word_list:
+            word = word.strip(",.':;!?()-_$/`~\"\\")
+            if word == "":
+                continue
+            word_dict[word] = word_dict.get(word, 0) + 1
+            num += 1
+    textfile.close()
+
+    outfile = open(stat_file, "w")
+    for word in sorted(word_dict.keys()):
+        outfile.write(word + ", " + str(word_dict[word]) + "\n")]
+    outfile.close()
+    return num, len(word_dict)
+```
+> 字频统计p111
+```
+def char_count(s, dic):
+    for c in s:
+        if not c.isalpha():
+            continue
+        c = c.lower()
+        dic[c] = dic.get(c, 0) + 1
+```
+
+
 #### 5 Dict
 具有迭代性质的对象：
 > 迭代过程中不应增删处理字典元素，否则可能：继续迭代可能遗漏元素，也可能报 RuntineError
