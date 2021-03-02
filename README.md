@@ -387,5 +387,63 @@ def gen_table(start, end, step):
         
 gen_table(0.0, 1.05, 0.1)
 ```
-    
-    
+
+#### 5 文件输入输出
+`inf = open(...)`
+文本文件可以看成行的序列，按行处理是最常见的方式。Python 把文本读文件对象看作可迭代对象，文本读文件对象可以直接转换为列表：
+```
+for line in inf:
+    ...line...
+inf.close()
+```
+> 文件操作函数p103：
+```
+f.tell()
+f.seek(offset[, whence])
+os.listdir(path='.')
+os.chdir(path)
+os.mkdir(path)
+os.mkdirs(path)
+os.rmdir(path)
+os.remove(filename)
+os.scandir(path='.')
+
+import os
+for entry in os.scandir():
+    if entry.is_dir():
+        print('DIctionary', entry.name)
+    elif entry.is_file():
+        print("Fileneme", entry.name)
+    else:
+        print("Something wrong")
+```
+> 统计Python代码总字符数、空格数
+```
+import os
+def work_on_file(fname):
+    t, b = 0, 0
+    file = open(fname, encoding='utf8')
+    for line in file:
+        for c in line:
+            t += 1
+            if c.isspace():
+                b += 1
+    file.close()
+    return t, b
+def stat(path='.'):
+    total, blank, other = 0, 0, 0
+    os.chdir(path)
+    for entry in os.scandir():
+        if entry.is_file() and len(entry.name) > 3\
+            and entry.name[-3:] == ".py":
+            print("Work on file: ", entry.name)
+            t, b = work_on_file(entry.name)
+            total += t
+            blank += b
+            other += t - b
+    return total, blank, other
+
+print(stat())
+```
+
+
