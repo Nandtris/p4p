@@ -364,5 +364,28 @@ s = [1, 2, 3]
 s[0:0] = '01'
 print(s) # ['0', '1', 1, 2, 3]
 ```
+#### 4 字符串和格式化p95
+用 `print`输出时，如果实参不是字符串， `print`自动调用 `str`得到字符串。<br>
+`s.format(*args, **keyargs)`
+```
+{1:->10s}
+{price:10.2f}
+{:<<10d}
+```
+```
+from math import sin, cos
 
+head = "{:<5}   {:<12s}  {:<12s}"
+cotent = "{:5.3f}   {:12.10f}  {12.10f}"
+
+def gen_table(start, end, step):
+    print(head.format('x', 'sin(x)', 'cos(x)'))
+    x = start
+    while x < end:
+        print(content.format(x, sin(x), cos(x)))
+        x += step
+        
+gen_table(0.0, 1.05, 0.1)
+```
+    
     
