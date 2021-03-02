@@ -150,9 +150,9 @@ def fib(n):
 ```
 > improved: Loop + 平行赋值 <br>
 > **循环不变式**证明 while LOOP p29 <br>
-> 0 如果 每次判断循环条件时 f1 的值总是第 k 个斐波那契数，而 f2 的值总是第 k+1 个斐波那契数， 当 k=n 时循环结束，f1 就一定是第 n 个斐波那契数了。<br>
-> 1 初始化中，f1==0，也即 F0，且 f2 的值是 F1，是下一个斐波那契数，所需关系成立。<br>
-> 2 假设某次判断循环条件时，f1 的值是 Fk 且 f2 的值是Fk+1。循环体里的赋值使 f1 f2 分别变成 Fk+1 Fk+2，随后变量 k 的值加1，f1 f2 重新变成 Fk Fk+1。因此在下一次判断循条件时，所需关系仍然成立。<br>
+> 0~ 如果 每次判断循环条件时 f1 的值总是第 k 个斐波那契数，而 f2 的值总是第 k+1 个斐波那契数， 当 k=n 时循环结束，f1 就一定是第 n 个斐波那契数了。<br>
+> 1~ 初始化中，f1==0，也即 F0，且 f2 的值是 F1，是下一个斐波那契数，所需关系成立。<br>
+> 2~ 假设某次判断循环条件时，f1 的值是 Fk 且 f2 的值是Fk+1。循环体里的赋值使 f1 f2 分别变成 Fk+1 Fk+2，随后变量 k 的值加1，f1 f2 重新变成 Fk Fk+1。因此在下一次判断循条件时，所需关系仍然成立。<br>
 ```
 # while LOOP
  def fib(n):
@@ -181,7 +181,7 @@ def fib0(f1, f2, k, n):
 def fib(n):
     return fib0(0, 1, 1, n)
     
-# list F0~Fn
+# 用表缓存 list F0~Fn
 def gen_fibs(n):
     fibs = [0] * (n + 1)
     fibs[1] = 1
@@ -196,6 +196,18 @@ def gen_fibs1(n):
     return fibs
  
 fs = gen_fibs(20)
+
+# 用字典缓存
+def fib(n):
+    fibs = {0:0, 1:1}
+    
+    def fib0(k):
+        if k in fibs:
+            return fibs[k]
+        fibs[k] = fib0(k-2) + fib0(k-1)
+        return fibs[k]
+        
+    return fib0(n)
 ```
 
 #### 4 程序框架（函数嵌套p38 高阶函数p41、p69）
@@ -444,6 +456,21 @@ def stat(path='.'):
     return total, blank, other
 
 print(stat())
+```
+#### 5 Dict
+具有迭代性质的对象：
+> 迭代过程中不应增删处理字典元素，否则可能：继续迭代可能遗漏元素，也可能报 RuntineError
+> 通过标准函数 iter 得到字典的迭代器后，处理中也不允许增删字典元素
+```
+dic.keys()
+dic.values()
+dic.items()
+
+for k in dic.keys():
+    ...k...dic[k]...
+==
+for k in dic: # 解释器自动调用 keys()
+    ...k...dic[k]...
 ```
 
 
