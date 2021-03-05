@@ -625,3 +625,46 @@ if not p: ...     # 歧义：p == 0 [] "" 时语句也执行
 x = [1, 2, 3]
 print(x.pop() * 2 + x.pop())
 ```
+#### 生成器函数，函数带有 `yeild x`
+> 调用一次生成器函数返回一个迭代器对象 <br>
+> range函数、生成器表达式 `(n**2 for n in range(10))`、map、filter 等 <br>
+> 返回对象都与生成器类似，也可以对这种对象调用 `next()` <br> 
+> 例子：获取文件里的浮点数 生成器实现
+```
+def read_floats(fname):
+    infile = open(fname)
+    for line in infile:
+        for s in line.split():
+            yield float(s)
+    infile.close()
+```
+> 同样功能 p165：
+```
+"""
+模块 readfloats.py 
+支持用户读入内容为浮点数的数据文件，采用缓冲方式
+函数 open_floats 打开指定文件
+每次调用函数 next_float 返回一个浮点数
+读完文件中所有浮点数后，该函数返回 None
+用一组全局变量记录文件对象和文件读入的状态
+"""
+infile = None
+nlist = []
+crt = 0
+
+def open_floats(fname):
+    global infile
+    infile = open(fname)
+def next_float(): # 缓冲式处理
+    global nlist, crt
+    if crt == len(nlist): # 当前行用完，再读一行
+        line = infile.readline()
+        if not line: # 空字符串，表示文件已经处理完
+            infile.close()
+            return None
+        nlist = line.split()
+        crt = 0
+    x = nlist[crt] # 当前元素
+    crt += 1
+    return float(x)
+```
