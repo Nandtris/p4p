@@ -625,11 +625,11 @@ if not p: ...     # 歧义：p == 0 [] "" 时语句也执行
 x = [1, 2, 3]
 print(x.pop() * 2 + x.pop())
 ```
-#### 生成器函数，函数带有 `yeild x`
+#### 3 生成器函数，函数带有 `yeild x`
 > 调用一次生成器函数返回一个迭代器对象 <br>
 > range函数、生成器表达式 `(n**2 for n in range(10))`、map、filter 等 <br>
 > 返回对象都与生成器类似，也可以对这种对象调用 `next()` <br> 
-> 例子：获取文件里的浮点数 生成器实现
+> 例子：获取文件里的浮点数 *生成器实现*
 ```
 def read_floats(fname):
     infile = open(fname)
@@ -638,7 +638,7 @@ def read_floats(fname):
             yield float(s)
     infile.close()
 ```
-> 同样功能 p165：
+> *普通函数*同样功能 p165：
 ```
 """
 模块 readfloats.py 
@@ -667,4 +667,30 @@ def next_float(): # 缓冲式处理
     x = nlist[crt] # 当前元素
     crt += 1
     return float(x)
+```
+#### 4 闭包实现
+```
+def read_floats(fname):
+    nlist = []
+    infile = open(fname)
+    crt = 0
+    
+    def next_float():
+        nonlocal nlist, crt
+        if crt == len(nlist):
+            line = infile.readline()
+            if not line:
+                infile.close()
+                return None
+            nlist = line.split()
+            crt = 0
+        crt += 1
+        return float(nlist[crt-1])
+    return next_float # 函数返回局部定义的函数对象，即闭包
+    
+if __name__ == "__main__":
+    next_number = read_floats("datafile.dat")
+    for i in range(10):
+        print(next_number())
+    print("--" * 10)
 ```
