@@ -629,7 +629,7 @@ print(x.pop() * 2 + x.pop())
 > 调用一次生成器函数返回一个迭代器对象 <br>
 > range函数、生成器表达式 `(n**2 for n in range(10))`、map、filter 等 <br>
 > 返回对象都与生成器类似，也可以对这种对象调用 `next()` <br> 
-> 例子：获取文件里的浮点数 *生成器实现*
+> 例子：*生成器实现*获取文件里的浮点数 
 ```
 def read_floats(fname):
     infile = open(fname)
@@ -668,8 +668,21 @@ def next_float(): # 缓冲式处理
     crt += 1
     return float(x)
 ```
-#### 4 闭包实现
+#### 4 *闭包(closure)实现*获取文件里的浮点数 p172
 ```
+"""
+read_floats 结束时，其值返回给 next_number
+返回值包括 闭包二元组：
+1~ 局部函数 next_float 定义生成的函数对象
+2~ read_floats 本次调用建立的名字空间
+
+每次调用函数 read_floats 将建立一个新的局部名字空间
+返回的闭包二元组引用着它，其中封装着读入文件的状态
+可以多次调用 read_floats 打开多个文件
+不同文件读入互不干扰
+
+闭包还用于定义装饰器
+"""
 def read_floats(fname):
     nlist = []
     infile = open(fname)
