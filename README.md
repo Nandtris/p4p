@@ -707,3 +707,35 @@ if __name__ == "__main__":
         print(next_number())
     print("--" * 10)
 ```
+> 闭包构造装饰器p314
+```
+def deco(fun):
+    def wrapper(*args, **kwargs):
+        print(fun.__name__+" stars.")
+        x = fun(*args, **kwargs)
+        print(fun.__name__+" end.")
+        return x
+    return wrapper
+
+def decodeco(fun):
+    def wrapper(*args, **kwargs):
+        print(fun.__name__ + "......")
+        x= fun(*args, **kwargs)
+        print(fun.__name__ + "------")
+        return x
+    return wrapper
+
+@decodeco
+@deco
+def func4(a, b, c, d, e):
+    print(a + b*c - d + e)
+    return(a + b*c -d + e)
+
+func4(1, 2, 3, 4, 5)
+# wrapper......
+# func4 stars.
+# 8
+# func4 end.
+# wrapper------
+```
+
