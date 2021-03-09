@@ -738,4 +738,56 @@ func4(1, 2, 3, 4, 5)
 # func4 end.
 # wrapper------
 ```
+> 装饰器构造 日志文件(.log)p318
+```
+def log_func(fname):
+    def deco(fun):
+        def wrapper(*args, **kwargs):
+            logfile.write(fun.__name__ + " stars.\n")
+            logfile.flush()
+            x = fun(*args, **kwargs)
+            logfile.write(fun.__name__ + " ends.\n")
+            logfile.flush()
+            return x
+        return wrapper
+    if fname[-4:] != ".log":
+        fname = fname + ".log"
+    logfile = open(fname, 'w')
+    return deco
+
+log2 = log_func("logfile2")
+
+@log2
+def func3(a, b, c, d):
+    return a + b * c - d
+@log2
+def func4(a, b, c, d, e):
+    x = func3(a, b, c, d)
+    y = func3(b, c, d, e)
+    return x * y
+
+x1 = func3(2, 3, 5, 1)
+x2 = func3(2, 3, 4, 2)
+a = func4(2, 3, 4, 2, 10)
+b = func4(2, 3, 2, 5, 4)
+
+print(x1 + x2, a - b)
+
+# func3 stars.
+# func3 ends.
+# func3 stars.
+# func3 ends.
+# func4 stars.
+# func3 stars.
+# func3 ends.
+# func3 stars.
+# func3 ends.
+# func4 ends.
+# func4 stars.
+# func3 stars.
+# func3 ends.
+# func3 stars.
+# func3 ends.
+# func4 ends.
+```
 
