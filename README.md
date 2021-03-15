@@ -834,10 +834,57 @@ Python 程序运行中隐式代价分为：<br>
 - 静态方法 @staticmethod：局部定义非实例方法
   - 静态方法就是定义在类里的普通函数、局部函数，但其形参表里没有 self。
   - 可以从其类名出发调用，也可从该类的对象(r1._gcd?)出发来调用p218
-- 类方法
-- 一个类里，一个实例方法调用其他实例方法，须通过 `self.func(...)` 形式
-- 屏蔽问题： __init__ 里赋值的属性与类中方法同名，就会屏蔽同名实例方法
-  - Rational.__init__ 里若给 self.num 赋值，则 Rational.num 被屏蔽。
+- 类方法 @classmethod，实现与类有关的方法
+  - 例子，类实例计数器p222
+  - 参数表里至少有一个表示类的形参 cls
+  - 类方法通过类名，以属性引用的形式调用
+  - 执行时这个类约束到方法的 cls 参数，可以通过 cls 访问其他属性
+```
+# 客户管理器p227
+class Customer:
+    def __init__(self, name):
+        self.name = name
+        self._total = 0
+    def pay(self, price):
+        self._total += price
+        return price
+    def total(self):
+        return self._total
+        
+class CustomerManager:
+    """定义一个数据属性，用一个字典记录所有用户信息。
+    几个类方法完成客户管理操作，包括加入新客户、客户购物累计金额、检查客户购物总金额
+    _customers = {}
+    
+    @classmethod
+    def new_customer(cls, name):
+        if not isinstance(name, str):
+            raise TypeError("Creat Record Error: ", name)
+        cls._customers[name] = Customer(name)
+        
+    @classmethod
+    def pay_price(cls, name, price):
+        if (not isinstance(name, str) or not isinstance(price, float)):
+            raise TypeError("Purshese Error: ", name, price)
+        if name not in cls._customers:
+            cls._customers[name] = Customer(name)
+        return cls._customers[name].pay(price)
+        
+    @classmethod
+    def check_total(cls, name):
+        if name not in cls._customers:
+            raise KeyError("Not this customer: ", name)
+        return cls._customers[name].total()
+```
+- 同一个类里，方法属性调用：
+  - 一个实例方法调用其他实例方法，须通过 `self.func(...)` 形式
+  - 类数据/函数属性作用域不自动延伸到其内部嵌套的作用域，引用须基于 *类名采用属性引用* 的形式
+- 类外调用
+  - 类中按默认方式定义的函数可通过本类实例调用
+  - @staticmethod @classmethod 除外
+  - 类定义也是局部作用域，类外使用须采用基于类名的属性访问形式
+- 屏蔽问题： `__init__` 里赋值的属性与类中方法同名，就会屏蔽同名实例方法
+  - `Rational.__init__` 里若给 self.num 赋值，则 Rational.num 被屏蔽。
 
 ```
 class Rational:
@@ -908,13 +955,4 @@ class Rational:
     def __str__(self):
         # print() 输出
         return str(self._num) + '/' + str(self._den)
-
-if __name__ == "__main__":
-    five = Rational(5)
-    x = Rational(3, 5)
-    print('Two third are', Rational(2, 3)) # Two third are 2/3
-    y = five + x * Rational(5, 17) 
-    if y > Rational(123, 11): print('It is large.')
-    t = type(five) # <class '__main__.Rational'>
-    if isinstance(five, Rational): print('It is OK.')
 ```
