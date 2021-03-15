@@ -1,4 +1,4 @@
-# P4P
+# P4P/Python3.x
 程序员学Python笔记
 
 ## chap1 
@@ -852,8 +852,11 @@ class Customer:
         return self._total
         
 class CustomerManager:
-    """定义一个数据属性，用一个字典记录所有用户信息。
-    几个类方法完成客户管理操作，包括加入新客户、客户购物累计金额、检查客户购物总金额
+    """
+    定义一个数据属性，用一个字典记录所有用户信息。
+    几个类方法完成客户管理操作，
+    包括加入新客户、客户购物累计金额、检查客户购物总金额。
+    """
     _customers = {}
     
     @classmethod
@@ -875,6 +878,43 @@ class CustomerManager:
         if name not in cls._customers:
             raise KeyError("Not this customer: ", name)
         return cls._customers[name].total()
+        
+# 客户管理器扩充，加入 VIP 客户管理p239
+class VIP(Customer):
+    _discount = 0.98
+    
+    def __init__(self, name, total):
+        super().__init__(name)
+        self._total = total
+    def pay(self, price):
+        paid = round(price * VIP._discount, 2)
+        self._total += price
+        return paid
+
+class VIPCusManager(CustomerManager):
+    _VIP_price = 1000.0
+    
+    @classmethod
+    def is_VIP(cls, name):
+        if (name not in cls._customers or not isinstance(cls._customers[name], VIP)):
+            return False
+        return True
+    
+    @classmethod
+    def pay_price(cls, name, price):
+        if (not isinstance(name, str) or not isinstance(price, float)):
+            raise TypeError("Purshese Error: ", name, price)
+        if name not in cls._customers:
+            cls._customers[name] = Customers[name]
+        
+        customer = cls._customers[name]
+        paid = customer.pay(price)
+        total = customer.total()
+        
+        if (not isinstance(customer, VIP) and total > cls._VIP_price):
+            cls._customers[name] = VIP(name, total)
+            
+        return paid
 ```
 - 同一个类里，方法属性调用：
   - 一个实例方法调用其他实例方法，须通过 `self.func(...)` 形式
@@ -888,6 +928,11 @@ class CustomerManager:
 
 ```
 class Rational:
+    """有理数类，
+    通过最大公约数化简后得到最简形式有理数，
+    并且规范有理数，±符号统一在分子上。
+    定义有理数算数、逻辑运算"""
+    
     @staticmethod
     def _gcd(m, n):
         # 求最大公约数
@@ -956,3 +1001,32 @@ class Rational:
         # print() 输出
         return str(self._num) + '/' + str(self._den)
 ```
+#### 2 继承
+基类与派生类。派生类初始化中，如加入新属性须考虑基类继承的属性，通常是：
+```
+class DerivedClass(BaseClass):
+    def __init__(self, x, y, ... ):
+        BaseClass.__init__(...)
+        x...y...      
+```
+动态约束原则p236
+- 基于方法调用时， self 所指实例对象的类型确定被调函数（g()）
+- Python 解释器在派生类中查找函数类别归属时，self 指向本派生类：
+```
+class B:
+    def f(self):
+        return self.g()
+    def g(self):
+        print("B.g is called.")
+
+class C(B):
+    def g(self):
+        print("C.g is called.")
+y = C()
+y.f() # C.g is called.
+```
+Python 提供 super 方法实现多继承中如何指定基类功能：
+- 默认形式：super().method()，派生类直接调用第一个基类的方法 BaseClass.method()
+- super(C, o).method() 
+- https://www.runoob.com/python/python-func-super.html
+- 
