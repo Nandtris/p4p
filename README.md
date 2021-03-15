@@ -30,7 +30,7 @@
 ```
 from math import ceil
 ceil(-0.5) # 0
-ceil(-0.9) # 0
+ceil(-0.9) # 0`
 ceil(0.3) # 1
 ```
 向下取整: floor()
@@ -339,8 +339,8 @@ class Rational:
     def __turediv__(self, another):
         if another.num() == 0:
             raise ZeroDivisionError
-        rel = （(self._num * another.den())/
-              (self._den * another.sun())）
+        rel = ((self._num * another.den())/
+              (self._den * another.sun()))
         return rel
         
     # logical operation
@@ -833,5 +833,88 @@ Python 程序运行中隐式代价分为：<br>
   - 执行 `r1.plus(r2)` 时，r1 约束到 self，其他实参约束到后面的形参。
 - 静态方法 @staticmethod：局部定义非实例方法
   - 静态方法就是定义在类里的普通函数、局部函数，但其形参表里没有 self。
-  - 可以从其类名出发调用，也可从该类的对象出发来调用p218
-  - 
+  - 可以从其类名出发调用，也可从该类的对象(r1._gcd?)出发来调用p218
+- 类方法
+- 一个类里，一个实例方法调用其他实例方法，须通过 `self.func(...)` 形式
+- 屏蔽问题： __init__ 里赋值的属性与类中方法同名，就会屏蔽同名实例方法
+  - Rational.__init__ 里若给 self.num 赋值，则 Rational.num 被屏蔽。
+
+```
+class Rational:
+    @staticmethod
+    def _gcd(m, n):
+        # 求最大公约数
+        if n == 0:
+            m, n = n, m
+        while m != 0:
+            m, n = n % m, m
+        return n
+    def __init__(self, num, den=1):
+        if not (isinstance(num, int) and isinstance(den, int)):
+            raise TypeError
+        if den == 0:
+            raise ZeroDivisionError
+        sign = 1
+        if num < 0:
+            num, sign = -num, -sign
+        if den < 0:
+            den, sign = -den, -sign
+        g = Rational._gcd(num, den) # 化简，无公约数
+        self._num = sign * (num // g) # 规范 负号显示在分子上
+        self._den = den // g
+    def num(self):
+        return self._num
+    def den(self):
+        return self._den
+        
+    # 特殊方法名 + * //
+    def __add__(self, another):
+        num = (self._num * another.den() +
+               self._den * another.num())
+        den = self._den * another.den()
+        return Rational(num, den)
+        
+    def __mul__(self, another):
+        return Rational(self._num * another.num(),
+                        self._den * another.den())
+                        
+    def __floordiv__(self, another):
+        if another.num() == 0:
+            raise ZeroDivisionError
+        return Rational(self._num * another.den(),
+                        self._den * another.num())
+     
+    # other: -:__sub__, %:__mod__ ...
+    
+    # /:__truediv__ 有理数转换浮点数
+    def __turediv__(self, another):
+        if another.num() == 0:
+            raise ZeroDivisionError
+        rel = ((self._num * another.den())/
+              (self._den * another.sun()))
+        return rel
+        
+    # logical operation
+    def __eq__(self, another):
+        # num den 均通过 Rational 化简得到，不须通分比较
+        return (self._num == another.num() and
+                self._den == another.den())
+        
+    def __lt__(self, another):
+        return (self._num * another.den() <
+                self._den * another.num())
+    # other: !=:__ne__, <=:__le__, >:__gt__, >=:__ge__
+    
+    def __str__(self):
+        # print() 输出
+        return str(self._num) + '/' + str(self._den)
+
+if __name__ == "__main__":
+    five = Rational(5)
+    x = Rational(3, 5)
+    print('Two third are', Rational(2, 3)) # Two third are 2/3
+    y = five + x * Rational(5, 17) 
+    if y > Rational(123, 11): print('It is large.')
+    t = type(five) # <class '__main__.Rational'>
+    if isinstance(five, Rational): print('It is OK.')
+```
