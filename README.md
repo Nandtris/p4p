@@ -879,10 +879,21 @@ class CustomerManager:
             raise KeyError("Not this customer: ", name)
         return cls._customers[name].total()
         
-# 客户管理器扩充，加入 VIP 客户管理p239
+# 继承例子：客户管理器扩充，加入 VIP 客户管理p239
+# 如果派生类对象需要新属性，须覆盖基类 __init__ 函数，
+# 在其中初始化所需新属性
+# 还需要初始化基类的对象的那些属性（p232），比如：
+# BaseClass.__init__/super().__init__()
+
 class VIP(Customer):
     _discount = 0.98
-    
+   
+    # 本初始化函数继承自基类 Customer，不能删除：
+    # 第一，当 total < 1000.0，类 VIP 要用基类 Customer 初始化函数及其实例方法
+    # 第二，当 total >= 1000.0，类 VIP 才正式用本类初始化函数及其方法，
+    # 此时，total 参数值来源 pay_price(cls, name, price) 函数 total 变量，
+    # 如果此时没有 total、 __init__(self, name, total)，check_total 返回值为 0，
+    # 这里假设 VIP 都是有过交易的客户，他们当前的消费总额由参数 total 给定p239
     def __init__(self, name, total):
         super().__init__(name)
         self._total = total
@@ -1029,4 +1040,4 @@ Python 提供 super 方法实现多继承中如何指定基类功能：
 - 默认形式：super().method()，派生类直接调用第一个基类的方法 BaseClass.method()
 - super(C, o).method() 
 - https://www.runoob.com/python/python-func-super.html
-- 
+- 见 *客户管理器扩充* 例子
