@@ -1042,12 +1042,378 @@ Python 提供 super 方法实现多继承中如何指定基类功能：
 - https://www.runoob.com/python/python-func-super.html
 - 见 *客户管理器扩充* 例子
 
-#### 3 review: Class-LinkedList
-pass
+#### 3 review: *Class-LinkedList
+```
+#coding=utf-8
 
+class SLNode:
+    'single link node'
+    __slots__ = ("elem", "next")
+
+    def __init__(self, elem, next_=None):
+        self.elem = elem
+        self.next = next_
+
+class LinkedListUnderflow(ValueError):
+    pass
+
+class LinkedList:
+
+    Node = SLNode
+
+    def __init__(self, inits=()):
+        self._head = None
+        if not inits:
+            return
+        try:
+            it = iter(inits)
+            p = type(self).Node(next(it))
+            self._head = p
+            for x in it:
+                p.next = type(self).Node(x)
+                p = p.next
+            return
+        except TypeError:
+            print("Non-iterable is used in Initiating LinkedList.")
+            raise
+        except StopIteration:
+            return
+
+    def __bool__(self):
+        return self._head is not None
+
+    def __len__(self):
+        p = self._head
+        ln = 0
+        while p:
+            p = p.next
+            ln += 1
+        return ln
+
+    def __str__(self):
+        p = self._head
+        s = []
+        while p:
+            try:
+                s.append(str(p.elem))
+            except TypeError:
+                print("Elem in LinkedList cannot convert to str.")
+                raise
+            p = p.next
+        return "[[{}]]".format(", ".join(s))
+
+    def __iter__(self):
+        p = self._head
+        while p:
+            yield p.elem
+            p = p.next
+
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            if key < 0:
+                raise IndexError("LinkedList does not support"
+                                 " neg index", key)
+            p = self._head
+            i = 0
+            while i < key:
+                if p is None:
+                    raise IndexError("Index in LinkedList is"
+                                     " out of range", key)
+                p = p.next
+                i += 1
+            return p.elem
+
+        if isinstance(key, slice):
+            res = LinkedList()
+            p = self._head
+            if not p: return res
+
+            start = key.start or 0
+            stop = key.stop
+            step = key.step or 1
+            # print(start, stop, step)
+            
+            if not (isinstance(start, int) and
+                    isinstance(step, int) and
+                    (isinstance(stop, int) or stop is None)):
+                raise TypeError("Index for slice in LinkedList.")
+            if step <= 0:
+                raise ValueError("Step cannot be 0 or less",
+                                 " in slice for LinkedList.")
+            if stop and start >= stop:
+                return res
+            
+            i = 0
+            while i < start:
+                if p is None: return res
+                p = p.next
+                i += 1
+
+            newp = res._head = type(self).Node(p.elem)
+
+            while p and (stop is None or i < stop):
+                num = 0 
+                while num < step:
+                    p = p.next
+                    num += 1
+                    i += 1
+                    if p is None or (stop and i == stop): break
+                else:
+                    newp.next = type(self).Node(p.elem)
+                    newp = newp.next
+
+            return res
+        raise TypeError(key, "used as index in LinkedList.")
+
+    def append(self, elem):
+        if self._head is None:
+            self._head = type(seld).Node(elem)
+            return
+        p = self._head
+        while p.next:
+            p = p.next
+        p.next = type(self).Node(elem)
+
+    def pop(self):
+        if self._head is None: # 空表
+            raise LinkedListUnderflow("pop empty LinkedList")
+        p = self._head
+        if p.next is None:
+            e = p.elem
+            self._head = None
+            return e
+        while p.next.next:
+            p = p.next
+        e = p.next.elem
+        p.next = None
+        return e
+
+    def prepend(self, elem):
+        self._head = type(self).Node(elem, self._head)
+
+    def prepop(self):
+        if self._head is None:
+            raise LinkedListUnderflow("prepop empty LinkedList")
+
+        e = self._head.elem
+        self._head = self._head.next
+        return e
+     
+    # 弄不懂
+    def reverse(self):
+        p = None
+        while self._head:
+            q = self._head
+            self._head = q.next
+            q.next = p
+            p = q
+        self._head = p
+
+    def mutate_elements(self, trans):
+        p = self._head
+        while p:
+            p.elem = trans(p.elem)
+            p = p.next
+
+    def sort(self):
+        p = self._head
+        if p is None or p.next is None:
+            return
+
+        rem = p.next
+        p.next = None
+        while rem:
+            q, p = None, self,_head
+            while p and p.elem <= rem.elem:
+                q = p
+                p = p.next
+
+            if  q is None:
+                self._head = rem
+            else:
+                q.next = rem
+            q = rem
+            rem = rem.next
+            q.next = p
+
+    def __reversed__(self):
+        self.reverse()
+        try:
+            p = self._head
+            while p:
+                yield p.elem
+                p = p.next
+        finally:
+            self.reverse()
+
+# 带尾节点指针的单链表
+class LinkedList1(LinkedList):
+    @staticmethod
+    def _set_rear(lst):
+        p = lst._head
+        if p is None: return
+        while p.next:
+            p = p.next
+        lst._rear = p
+
+    def __init__(self, inits=()):
+        LinkedList.__init__(self, inits)
+        self._set_rear(self)
+
+    def __getitem__(self, key):
+        res = LinkedList__getitem__(self, key)
+        if isinstance(key, int):
+            return res
+
+        # 求值 res,即基类__getitem__,得到链表切片
+        # 然后再设置尾节点指针
+        self._set_rear(res)
+        return res
+
+    def prepend(self, elem):
+        if self._head is None:
+            self._head = type(self).Node(elem, self._head)
+            self._rear = self._head
+        else:
+            self._head = type(self).Node(elem, self._head)
+
+    def append(self, elem):
+        if self._head:
+            self._rear.next = type(self).Node(elem)
+            self._rear = self._rear.next
+        else:
+            self._head = self.rear = type(self).Node(elem)
+
+    def pop(self):
+        if self._head is None:
+            raise LinkedListUnderflow("pop_last empty LinkedList1")
+        p = self._head
+        if p.next is None:
+            e = p.elem
+            self._head = None
+            self._rear = None
+            return e
+        while p.next.next:
+            p = p.next
+        e = p.next.elem
+
+        # 不懂
+        p.next = None
+        self._rear = p
+        return e
+
+    def reverse(self):
+        p = self._head
+        LinkedList.reverse(self)
+        self._rear = p
+
+    def sort(self):
+        LinkedList.sort(self)
+        self._rear(self)
+
+
+# 双链表
+class DLNode(SLNode):
+    __slots__ = ("prev",)
+    def __init__(self, elem, prev=None, next_=None):
+        SLNode.__init__(self, elem, next_)
+        self.prev = prev
+
+class DLinkedList(LinkedList):
+    Node = DLNode
+
+    @staticmethod
+    def _set_prev_and_rear(lst):
+        p = lst._head
+        if p is None:
+            return
+        
+        # 还得多想
+        p.prev = None
+        while p.next:
+            p.next.prev = p
+            p = p.next
+        lst._rear = p
+
+    def __init__(self, inits=()):
+        LinkedList.__init__(self, inits)
+        self._set_prev_and_rear(self)
+
+    def __getitem__(self, key):
+        res = LinkedList.__getitem__(self, key)
+        if isinstance(key, int):
+            return res
+        self._set_prev_and_rear(res)
+        return res
+
+    def reverse(self):
+        LinkedList.reverse(self)
+        self._set_prev_and_rear(self)
+
+    def sort(self):
+        LinkedList.sort(self)
+        self._set_prev_and_rear(self)
+
+    def prepend(self, elem):
+        p = DLNode(elem, None, self._head)
+        if self._head is None:
+            self._rear = p
+        else:
+            p.next.prev = p
+        self._head = p
+
+    def prepop(self):
+        if self._head is None:
+            raise LinkedListUnderflow("in prepop empty DLinkedList")
+        e = self._head.elem
+        self._head = self._head.next
+        if self._head:
+            self._head.prev = None
+        return e
+
+    def append(self, elem):
+        p = DLNode(elem, self._rear, None)
+        if self._head is None:
+            self._head = p
+        else:
+            p.prev.next = p
+        self._rear = p
+
+    def pop(self):
+        if self._head is None:
+            raise LinkedListUderflow("in pop_last of LDList ???")
+        e = self._rear.elem
+        self._rear = self.rear.prev
+        if self._rear is None:
+            self._head = None
+        else:
+            self._rear.next = None
+        return e
+
+    def __reversed__(self):
+        p = self._rear
+        while p:
+            yield p.elem
+            p = p.prev
+
+
+if __name__ == "__main__":
+
+    temp = LinkedList([1, 2, 3])
+    # [[1, 2, 3]]
+    print(temp)
+
+    # temp._head:  1 <__main__.SLNode object at 0x01450568>
+    print("temp._head: ", temp._head.elem, temp._head.next)
+
+    # temp._head.next :  2 <__main__.SLNode object at 0x01450F70>
+    print("temp._head.next : ",temp._head.next.elem,temp._head.next.next)
+
+```
 
 ## chap5 面向对象编程进阶
 #### 1 增加实例计数功能的 *元类*
+统计 Counter 引用次数
 ```
 class Counter(type):
     def __init__(cls, clsname, bases, attrdict, **kwds):
@@ -1060,5 +1426,42 @@ class Counter(type):
         cls.__objnum = 0
         cls.__init__ = tmp
         cls.objnum = classmethod(lambda cls: cls.__objnum)
-class MRational(metaclass=Counter, bases=Raitional):
+
+class Rational(metaclass=Counter):
+    
+    @staticmethod
+    def _gcd(m, n):
+        if n == 0:
+            m, n = n, m
+        while m != 0:
+            m, n = n % m, m
+        return n
+        
+    def __init__(self, num, den=1):
+        if not (isinstance(num, int) and isinstance(den, int)):
+            raise TypeError
+        if den == 0:
+            raise ZeroDivisionError
+        sign = 1
+        if num < 0:
+            num, sign = -num, -sign
+        if den < 0:
+            den, sign = -den, -sign
+        g = Rational._gcd(num, den) # 鍖栫畝锛屾棤鍏害鏁?
+        self._num = sign * (num // g) # 瑙勮寖 璐熷彿鏄剧ず鍦ㄥ垎瀛愪笂
+        self._den = den // g
+
+class MRational(Rational, metaclass=Counter):
     pass
+a =  MRational(4, 6)
+b =  MRational(2)
+
+# <bound method Counter.__init__.<locals>.<lambda> of <class '__main__.MRational'>>
+print(MRational.objnum) # MRational.objnum 不加括号结果如上
+
+c = Rational(6, 9)
+d = Rational(5)
+e = Rational(9, 10)
+print(Rational.objnum()) # 加括号：5
+
+```
