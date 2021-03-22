@@ -1041,3 +1041,24 @@ Python 提供 super 方法实现多继承中如何指定基类功能：
 - super(C, o).method() 
 - https://www.runoob.com/python/python-func-super.html
 - 见 *客户管理器扩充* 例子
+
+#### 3 review: Class-LinkedList
+pass
+
+
+## chap5 面向对象编程进阶
+#### 1 增加实例计数功能的 *元类*
+```
+class Counter(type):
+    def __init__(cls, clsname, bases, attrdict, **kwds):
+        init = cls.__init__
+        
+        def tmp(self, *args, **kwargs):
+            init(self, *args, **kwargs)
+            cls.__objnum += 1
+            
+        cls.__objnum = 0
+        cls.__init__ = tmp
+        cls.objnum = classmethod(lambda cls: cls.__objnum)
+class MRational(metaclass=Counter, bases=Raitional):
+    pass
