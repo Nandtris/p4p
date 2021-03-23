@@ -1412,8 +1412,9 @@ if __name__ == "__main__":
 ```
 
 ## chap5 面向对象编程进阶
+元类，用于创建类
 #### 1 增加实例计数功能的 *元类*
-统计 Counter 引用次数
+统计 Rational/Counter 实例引用次数p329
 ```
 class Counter(type):
     def __init__(cls, clsname, bases, attrdict, **kwds):
@@ -1428,6 +1429,7 @@ class Counter(type):
         cls.objnum = classmethod(lambda cls: cls.__objnum)
 
 class Rational(metaclass=Counter):
+    "有理数类，取初始化部分，供 Counter 使用"
     
     @staticmethod
     def _gcd(m, n):
@@ -1447,8 +1449,8 @@ class Rational(metaclass=Counter):
             num, sign = -num, -sign
         if den < 0:
             den, sign = -den, -sign
-        g = Rational._gcd(num, den) # 鍖栫畝锛屾棤鍏害鏁?
-        self._num = sign * (num // g) # 瑙勮寖 璐熷彿鏄剧ず鍦ㄥ垎瀛愪笂
+        g = Rational._gcd(num, den)
+        self._num = sign * (num // g)
         self._den = den // g
 
 class MRational(Rational, metaclass=Counter):
@@ -1462,6 +1464,20 @@ print(MRational.objnum) # MRational.objnum 不加括号结果如上
 c = Rational(6, 9)
 d = Rational(5)
 e = Rational(9, 10)
-print(Rational.objnum()) # 加括号：5
 
+# 加括号是为函数调用
+print(Rational.objnum()) #：5
 ```
+#### 2 自定义属性字典
+`__prepare__` 代替 `dict'<br>
+有序字典：维持创建类时属性定义的顺序
+```
+import collections
+class OrderedClass(type):
+    
+    @classmethod
+    def __prepare__(metacls, name, bases, **kwds):
+        return collections.OrderedDict()
+        
+    def __new__(cls, name, bases, namespase, **kwds):
+         result = type.__new__(cls, name, bases, dict(namespase))
