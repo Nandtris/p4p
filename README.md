@@ -1468,6 +1468,7 @@ e = Rational(9, 10)
 # 加括号是为函数调用
 print(Rational.objnum()) #：5
 ```
+
 用装饰器实现类似计数功能：实例创建个数p322
 ```
 def add_counter(cls):
@@ -1486,7 +1487,7 @@ def add_counter(cls):
 @add_counter
 class Rational(): ...
 ```
-```
+
 #### 2 自定义属性字典
 `__prepare__` 代替 `dict'<br>
 有序字典：维持创建类时属性定义的顺序
@@ -1520,4 +1521,21 @@ class A(metaclass=OrderedClass):
 print(A.members) 
 ```
 
+#### 3 元类和装饰器结合
+给类中每个方法增加计时功能。但只在开发调试(__debug__)时计时，实际运行时取消计时
+```
+def timing():
+    pass
+
+class MetaTiming(type):
+    def __new__(cls, clsname, bases, attrdict, **kwds):
+        if __debug__:
+            for attr, val in attrdict.items:
+                if callable(val): #
+                    attrdict[attr] = timing(val) # 装饰方法
+        return typr.__new__(cls, clsname, bases, attrdict)           
          
+```
+
+
+
