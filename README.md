@@ -1489,7 +1489,7 @@ class Rational(): ...
 ```
 
 #### 2 自定义属性字典
-`__prepare__` 代替 `dict'<br>
+`__prepare__` 代替 `dict`<br>
 有序字典：维持创建类时属性定义的顺序
 ```
 import collections
@@ -1521,7 +1521,7 @@ class A(metaclass=OrderedClass):
 print(A.members) 
 ```
 
-#### 3 元类和装饰器结合
+#### 3 元类和装饰器结合 p332
 给类中每个方法增加计时功能。但只在开发调试(__debug__)时计时，实际运行时取消计时
 ```
 def timing():
@@ -1537,5 +1537,56 @@ class MetaTiming(type):
          
 ```
 
+#### 属性管理和操作 
+
+```
+class Importance:
+    
+    def __init__(self):
+        # format: (12, 40)
+        self._time = None
+    
+    # 检查 _time 值是否符合要求。在数据入口避免错误， 保证对象的完整性p333
+    # 这个方法劫持-本类对象的所有属性赋值
+    # 一旦在此直接对属性赋值，将导致无穷自递归调用
+    # 所以需要调用基类的同名方法
+    def __setattr__(self, name, value):
+        if name == "_time":
+            if (value is None or
+                isinstance(value, tuple) and len(value) == 2 and 
+                isinstance(value[0], int) and 0 < value[0] < 24 and 
+                isinstance(value[1], int) and 0 < value[1] < 60):
+                
+                super().__setattr__(name, value)
+            else:
+                raise ValueError
+        else:
+            super().__setattr__(name, value)
+    
+    
+    # 改进 __setattr__， 屏蔽对象的实际属性名p334
+    # x.time = ... 赋值时，实际上是设置 _time 属性
+    def __setattr__(self, name, v):
+        if name == "time":
+            if (v is None or
+                isinstance(v, tuple) and len(v) == 2 and 
+                isinstance(v[0], int) and 0 < v[0] < 24 and 
+                isinstance(v[1], int) and 0 < v[1] < 60):
+                
+                super().__setattr__("_time", v)
+            else:
+                raise ValueError
+                
+        # 若此处分支条件
+        # 则执行 x.a = 3 时程序什么也不做
+        else:
+            super().__setattr__(name, value)
+   
+    def __getattr__(self, name):
+        if name == "time":
+            return self._time
+    
+    
 
 
+```
