@@ -1421,7 +1421,7 @@ class Counter(type):
         init = cls.__init__
         
         def tmp(self, *args, **kwargs):
-            init(self, *args, **kwargs)
+            init(self, *args, **kwargs) # 调用类的初始化函数
             cls.__objnum += 1
             
         cls.__objnum = 0
@@ -1468,16 +1468,56 @@ e = Rational(9, 10)
 # 加括号是为函数调用
 print(Rational.objnum()) #：5
 ```
+用装饰器实现类似计数功能：实例创建个数p322
+```
+def add_counter(cls):
+    cls.__objnum = 0
+    
+    init = cls.__init__
+    def tmp(self, *args, **kwargs):
+        init(self, *args, **kwargs) # 调用类的初始化函数
+        cls.__objnum += 1
+        
+    cls.__init__ = tmp
+    cls.objnum = classmethod(lambda cls: cls.__objnum)
+    
+    return cls
+
+@add_counter
+class Rational(): ...
+```
+```
 #### 2 自定义属性字典
 `__prepare__` 代替 `dict'<br>
 有序字典：维持创建类时属性定义的顺序
 ```
 import collections
+
+# OrderedClass 是元类，其实例就是基于它定义的类
 class OrderedClass(type):
     
     @classmethod
     def __prepare__(metacls, name, bases, **kwds):
+        # __prepare__ 以特殊方式为类对象准备名字空间字典
+        # OrderedDict 映射对象，其键值对维持着加入时的顺序
         return collections.OrderedDict()
         
-    def __new__(cls, name, bases, namespase, **kwds):
-         result = type.__new__(cls, name, bases, dict(namespase))
+    def __new__(cls, name, bases, namespace, **kwds):
+         result = type.__new__(cls, name, bases, dict(namespace))
+         
+         # 类中各属性的名字，依属性创建顺序记录
+         result.members = tuple(namespace)
+         
+         return result
+
+class A(metaclass=OrderedClass):
+    zero = 0
+    def one(self): pass
+    def two(self): pass
+    three = 3
+    
+# ('__module__', '__qualname__', 'zero', 'one', 'two', 'three')    
+print(A.members) 
+```
+
+         
