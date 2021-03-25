@@ -1538,8 +1538,8 @@ class MetaTiming(type):
 ```
 
 #### 类属性管理和操作 
-`__getattribute__, __setattr__, __delattr__`
-`__getattr__`
+`__getattribute__, __setattr__, __delattr__`<br>
+`__getattr__`<br>
 求证：`__name`, 类方法中用双下划线开头屏蔽属性名，以下实例是否是其实现原理
 ```
 class Importance:
