@@ -1537,16 +1537,19 @@ class MetaTiming(type):
          
 ```
 
-#### 属性管理和操作 
-
+#### 类属性管理和操作 
+`__getattribute__, __setattr__, __delattr__`
+`__getattr__`
+求证：`__name`, 类方法中用双下划线开头屏蔽属性名，以下实例是否是其实现原理
 ```
 class Importance:
+    # 检查 _time 值是否符合要求。在数据入口避免错误， 保证对象的完整性p333
     
     def __init__(self):
         # format: (12, 40)
         self._time = None
     
-    # 检查 _time 值是否符合要求。在数据入口避免错误， 保证对象的完整性p333
+    
     # 这个方法劫持-本类对象的所有属性赋值
     # 一旦在此直接对属性赋值，将导致无穷自递归调用
     # 所以需要调用基类的同名方法
@@ -1566,6 +1569,9 @@ class Importance:
     
     # 改进 __setattr__， 屏蔽对象的实际属性名p334
     # x.time = ... 赋值时，实际上是设置 _time 属性
+    # 此时，执行取值操作 x.time 则报错，x 无 time 属性
+    # 故 __getattr__ 设置取值操作
+    
     def __setattr__(self, name, v):
         if name == "time":
             if (v is None or
@@ -1577,7 +1583,7 @@ class Importance:
             else:
                 raise ValueError
                 
-        # 若此处分支条件
+        # 若无此处分支条件
         # 则执行 x.a = 3 时程序什么也不做
         else:
             super().__setattr__(name, value)
@@ -1585,8 +1591,4 @@ class Importance:
     def __getattr__(self, name):
         if name == "time":
             return self._time
-    
-    
-
-
 ```
