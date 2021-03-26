@@ -1413,7 +1413,7 @@ if __name__ == "__main__":
 
 ## chap5 面向对象编程进阶
 元类，用于创建类
-#### 1 增加实例计数功能的 *元类*
+#### 1 追踪实例：增加实例计数功能的 *元类*
 统计 Rational/Counter 实例引用次数p329
 ```
 class Counter(type):
@@ -1478,7 +1478,15 @@ def add_counter(cls):
     def tmp(self, *args, **kwargs):
         init(self, *args, **kwargs) # 调用类的初始化函数
         cls.__objnum += 1
-        
+    
+    # 设置删除函数
+    # 此时 Rational 类需要增加函数定义：__del__
+    # dele = cls.__del__
+    # def tmp2(self, *args, **kwargs):
+        # dele(self, *args, **kwargs)
+        # cls.__objnum -= 1
+    # cls.__del__ = tmp2
+    
     cls.__init__ = tmp
     cls.objnum = classmethod(lambda cls: cls.__objnum)
     
@@ -1488,6 +1496,26 @@ def add_counter(cls):
 class Rational(): ...
 ```
 
+但是，以上例子未考虑 *实例删除后* 的计数情况，改进如下：
+```
+class Counter:
+    __objnum = 0
+    
+    def __init__(self):
+        Counter.__objnum += 1
+        
+    def __del__(self):
+        Counter.__objnum -= 1
+        
+    @classmethod
+    def get_objnum(cls):
+        return Counter.__objnum
+x = Counter()
+y = Counter()
+z = y
+del y
+print(Counter.get_objnum()) # 2
+```
 #### 2 自定义属性字典
 `__prepare__` 代替 `dict`<br>
 有序字典：维持创建类时属性定义的顺序
