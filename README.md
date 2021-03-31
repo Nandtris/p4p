@@ -1633,7 +1633,7 @@ class Importance:
 ```
 
 
-附加:
+附加:py2.x 字符编码问题<br>
 python内部使用的是unicode编码，而外部却要面对千奇百怪的各种编码，那这些编码是怎么转换成内部的unicode呢？对于中文，可以用的常见编码有utf-8，gbk和gb2312等。只需在代码文件的最前端添加如下：
 ```
 # -*- coding: utf-8 -*-
@@ -1670,8 +1670,8 @@ s2=’哈’.decode(‘utf-8′)
 ```
 s3=unicode(‘哈’, ‘utf-8′).encode(‘utf-8′)
 ```
-s3现在又变回了utf-8的’哈’。
-————————————————
-版权声明：本文为CSDN博主「craftsman2020」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+s3现在又变回了utf-8的’哈’。<br>
+————————————————<br>
+版权声明：本文为CSDN博主「craftsman2020」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
 原文链接：https://blog.csdn.net/craftsman2020/article/details/109554069
 
