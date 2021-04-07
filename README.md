@@ -1633,7 +1633,8 @@ class Importance:
 ```
 
 
-附加:py2.x 字符编码问题<br>
+## 附加:
+#### 1 py2.x 字符编码问题<br>
 python内部使用的是unicode编码，而外部却要面对千奇百怪的各种编码，那这些编码是怎么转换成内部的unicode呢？对于中文，可以用的常见编码有utf-8，gbk和gb2312等。只需在代码文件的最前端添加如下：
 ```
 # -*- coding: utf-8 -*-
@@ -1675,3 +1676,21 @@ s3现在又变回了utf-8的’哈’。<br>
 版权声明：本文为CSDN博主「craftsman2020」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
 原文链接：https://blog.csdn.net/craftsman2020/article/details/109554069
 
+## py3.9.4 doc 
+#### 3.2. The standard type hierarchy
+- numbers.Number
+- Sequences
+ - Strings:
+str.encode() can be used to convert a str to bytes using the given text encoding,<br>
+and bytes.decode() can be used to achieve the opposite.
+ - Bytes
+A bytes object is an immutable array. The items are 8-bit bytes, 
+represented by integers in the range 0 <= x < 256. 
+Bytes literals (like b'abc') and the built-in bytes() constructor can be used to create bytes objects. 
+Also, bytes objects can be decoded to strings via the decode() method.
+- Set types
+- Mappings
+ - Dictionaries 
+Changed in version 3.7: Dictionaries did not preserve insertion order in versions of Python before 3.6. In CPython 3.6, insertion order was preserved, but it was considered an implementation detail at that time rather than a language guarantee.
+- Callable types
+- 
