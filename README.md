@@ -1676,6 +1676,46 @@ s3现在又变回了utf-8的’哈’。<br>
 版权声明：本文为CSDN博主「craftsman2020」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>
 原文链接：https://blog.csdn.net/craftsman2020/article/details/109554069
 
+## 双重装饰器
+原文链接：https://blog.csdn.net/xiangxianghehe/article/details/77170585
+```
+def dec1(func):  
+    print("1111")  
+    def one():  
+        print("2222")  
+        func()  
+        print("3333")  
+    return one  
+  
+def dec2(func):  
+    print("aaaa")  
+    def two():  
+        print("bbbb")  
+        func()  
+        print("cccc")  
+    return two  
+ 
+@dec1  
+@dec2  
+def test():  
+    print("test test")  
+  
+test()  
+```
+输出：
+```
+aaaa  
+1111  
+2222  
+bbbb  
+test test  
+cccc  
+3333
+```
+>装饰器的外函数和内函数之间的语句是没有装饰到目标函数上的，而是在装载装饰器时的附加操作。
+17~20行是装载装饰器的过程，相当于执行了test=dect1(dect2(test))，此时先执行dect2(test)，结果是输出aaaa、将func指向函数test、并返回函数two，然后执行dect1(two)，结果是输出1111、将func指向函数two、并返回函数one，然后进行赋值，用函数替代了函数名test。 22行则是实际调用被装载的函数，这时实际上执行的是函数one，运行到func()时执行函数two，再运行到func()时执行未修饰的函数test。
+
+
 ## py3.9.4 doc 
 #### 3.2. The standard type hierarchy
 - numbers.Number
