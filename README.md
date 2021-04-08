@@ -1721,16 +1721,12 @@ cccc
 - numbers.Number
 - Sequences
  - Strings:
-str.encode() can be used to convert a str to bytes using the given text encoding,<br>
-and bytes.decode() can be used to achieve the opposite.
  - Bytes
-A bytes object is an immutable array. The items are 8-bit bytes, 
-represented by integers in the range 0 <= x < 256. 
-Bytes literals (like b'abc') and the built-in bytes() constructor can be used to create bytes objects. 
-Also, bytes objects can be decoded to strings via the decode() method.
 - Set types
 - Mappings
  - Dictionaries 
-Changed in version 3.7: Dictionaries did not preserve insertion order in versions of Python before 3.6. In CPython 3.6, insertion order was preserved, but it was considered an implementation detail at that time rather than a language guarantee.
+> Changed in version 3.7: Dictionaries did not preserve insertion order in versions of Python before 3.6. In CPython 3.6, insertion order was preserved, but it was considered an implementation detail at that time rather than a language guarantee.
 - Callable types
-- 
+ - User-defined functions
+ - instance methods
+ - 
